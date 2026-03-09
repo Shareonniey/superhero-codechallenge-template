@@ -94,23 +94,47 @@ def create_hero_power():
     hero_id = data.get('hero_id')
     power_id = data.get('power_id')
     strength = data.get('strength')
-    
-    if not all([hero_id, power_id, strength]):
-       return jsonify({'errors': ['All fields are required']}), 400
+
+    valid_strengths = ['Strong', 'Weak', 'Average']
+    if strength not in valid_strengths:
+       return jsonify({
+          "errors": ["validation errors"]
+       }), 400
+
     hero = Hero.query.get(hero_id)
     power = Power.query.get(power_id)
+
     if not hero or not power:
-       return jsonify({'errors': ['Invalid hero_id or power_id']}), 400
-    hero_power = HeroPower(hero_id=hero_id, power_id=power_id, strength=strength)
+       return jsonify({'errors': ['validation error']}), 404
+    hero_power = HeroPower(
+       strength=strength,
+       hero_id=hero_id,
+       power_id=power_id
+    )
     db.session.add(hero_power)
     db.session.commit()
+    
     return jsonify({
        "id": hero_power.id,
        "strength": hero_power.strength,
-       "hero_id": hero_power. hero_id,
+       "hero_id": hero_power.hero_id,
        "power_id": hero_power.power_id,
        "hero": hero_power.hero.to_dict(),
        "power": hero_power.power.to_dict()
+       
+       if hasattr(hero_power.hero, 'to_dict')
+       else{
+          "id": hero_power.hero.id,
+          "name": hero_power.hero.name,
+          "super_name": hero_power.hero.super_name
+       },
+       "power": hero_power.power.to_dict()
+       if hasattr(hero_power.power, 'to_dict')
+       else{
+          "id": hero_power.power.id,
+          "name": hero_power.power.name,
+          "description": hero_power.power.description
+            }
     }), 200
 
 if __name__ == '__main__':

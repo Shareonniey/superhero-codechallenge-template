@@ -204,7 +204,7 @@ class TestApp:
                 db.session.commit()
 
             response = app.test_client().post(
-                'hero_powers',
+                '/hero_powers',
                 json={
                     'strength': 'Weak',
                     'hero_id': hero.id,
@@ -239,7 +239,7 @@ class TestApp:
             db.session.commit()
 
             response = app.test_client().post(
-                'hero_powers',
+                '/hero_powers',
                 json={
                     'strength': 'Cheese',
                     'hero_id': hero.id,
